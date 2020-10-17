@@ -52,3 +52,9 @@ func New() validation.Validator {
 		validator: validator.New(),
 	}
 }
+
+// ValidateStruct is a helper for easy validation
+func ValidateStruct(i interface{}) []error {
+	validator := New()
+	return validator.Validate(i)
+}
