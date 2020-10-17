@@ -3,7 +3,7 @@ package localization
 import (
 	"strings"
 
-	"github.com/adityak368/swissknife/localization"
+	"github.com/adityak368/swissknife/localization/i18n"
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,7 +15,7 @@ func EchoLocalizer() echo.MiddlewareFunc {
 			if language == "" {
 				language = "en-US"
 			}
-			translator := localization.Get().Translator(language)
+			translator := i18n.Localizer().Translator(language)
 			c.Set("translator", translator)
 			return handlerFunc(c)
 		}

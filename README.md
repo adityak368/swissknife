@@ -71,7 +71,7 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
     localizer := i18n.Localizer()
     localizer.LoadJSONLocalesFromFolder("res/locales") // locales contains file en-US.json
-    translator := localization.Get().Translator("en-US")
+    translator := localizer.Translator("en-US")
     translated := translator.Tr("Key")
     //Or With params
     translated := translator.Tr("Key", "Params")
