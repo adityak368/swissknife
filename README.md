@@ -15,6 +15,7 @@ go get -u github.com/adityak368/swissknife/<modulename>
 - Basic Crypto functions for symmetric and asymmetric key encryptions
 
 ```go
+
     import "github.com/adityak368/swissknife/crypto"
 
     priv, pub := crypto.GenerateRsaKeyPair()
@@ -27,7 +28,7 @@ go get -u github.com/adityak368/swissknife/<modulename>
         return err
     }
 
-    encryptedData, err := crypto.EncryptUsingSymmKey(msg, privKey)
+    encryptedData, err := crypto.EncryptUsingSymmKey(data, privKey)
     if err != nil {
         return err
     }
@@ -45,7 +46,7 @@ go get -u github.com/adityak368/swissknife/<modulename>
 
 ```go
     import "github.com/adityak368/swissknife/email"
-    import "github.com/adityak368/swissknife/knifemailer"
+    import "github.com/adityak368/swissknife/email/knifemailer"
 
     mailer := knifemailer.New(email.MailerConfig{
         Host:     config.EmailHost,
@@ -116,6 +117,8 @@ go get -u github.com/adityak368/swissknife/<modulename>
     import "github.com/adityak368/swissknife/middleware/ratelimiter"
     import "github.com/adityak368/swissknife/middleware/localization"
     import "github.com/adityak368/swissknife/middleware/errorhandler"
+	import "github.com/labstack/echo/v4"
+
     // Using Echo Middleware
     e := echo.New()
 
@@ -159,7 +162,10 @@ go get -u github.com/adityak368/swissknife/<modulename>
 
     user := c.Get("user").(*models.User)
 
-    uploadResult, err := store.AddImage(config.S3AvatarBucket, user.ID.Hex(), bufReader)
+    bucket := "abcd"
+    id := "id"
+
+    uploadResult, err := store.AddImage(bucket, id, bufReader)
     if err != nil {
         return err
     }
@@ -169,13 +175,14 @@ go get -u github.com/adityak368/swissknife/<modulename>
 ### Response
 
 - Defines the input/output interfaces for the internal business handlers
+- Each internal function would return a result and error
 
 ```go
     import "github.com/adityak368/swissknife/response"
 
     func Login(c context.Context, user *User) (*response.Result, error) {
         if user.Authenticate() {
-            return &response.Result{Data: map[string]string{token: "Token"}}, nil
+            return &response.Result{Data: map[string]string{token: "Token"}, MessageID: "UserAuthenticated"}, nil
         }
         return nil, response.NewError(http.StatusBadRequest, "InvalidEmailPassword")
     }
@@ -192,7 +199,7 @@ go get -u github.com/adityak368/swissknife/<modulename>
     type Test struct {
         A int `validate:"required,min=8,max=16"`
     }
-    t := Test{A:1}
+    t := Test{A:10}
     validator := playground.New()
     validator.Validate(t)
 
