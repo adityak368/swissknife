@@ -14,15 +14,16 @@ type GoPlaygroundValidator struct {
 }
 
 // Validate Implements the validator interface
-func (v *GoPlaygroundValidator) Validate(i interface{}) []error {
+func (v *GoPlaygroundValidator) Validate(i interface{}) error {
 	err := v.validator.Struct(i)
 	if err != nil {
-		return toInternalError(err)
+		return err
 	}
 	return nil
 }
 
-func toInternalError(err error) []error {
+// ToResponseError Converts playground errors to the generic response error from which we can translate
+func ToResponseError(err error) []error {
 
 	var errors []error
 
@@ -54,7 +55,7 @@ func New() validation.Validator {
 }
 
 // ValidateStruct is a helper for easy validation
-func ValidateStruct(i interface{}) []error {
+func ValidateStruct(i interface{}) error {
 	validator := New()
 	return validator.Validate(i)
 }
