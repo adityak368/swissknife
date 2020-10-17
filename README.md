@@ -6,7 +6,7 @@ Split into small modules so that you dont have to import everything. There is a 
 
 ```
 
-go get -u github.com/adityak368/swissknife/<modulename>
+go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ```
 
@@ -159,8 +159,6 @@ go get -u github.com/adityak368/swissknife/<modulename>
     if err != nil || !(contentType == "image/jpeg" || contentType == "image/png") {
         return err
     }
-
-    user := c.Get("user").(*models.User)
 
     bucket := "abcd"
     id := "id"
