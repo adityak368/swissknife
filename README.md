@@ -5,7 +5,9 @@
 Split into small modules so that you dont have to import everything. There is a default implementation for most of the modules. Users can also create plugins by implementing the module interface.
 
 ```
-    go get -u github.com/adityak368/swissknife/<modulename>
+
+go get -u github.com/adityak368/swissknife/<modulename>
+
 ```
 
 ### Crypto
@@ -25,15 +27,16 @@ Split into small modules so that you dont have to import everything. There is a 
         return err
     }
 
-	encryptedData, err := crypto.EncryptUsingSymmKey(msg, privKey)
-	if err != nil {
-		return err
-	}
+    encryptedData, err := crypto.EncryptUsingSymmKey(msg, privKey)
+    if err != nil {
+        return err
+    }
 
-	data, err := crypto.DecryptUsingSymmKey(encryptedData, privKey)
-	if err != nil {
-		return err
-	}
+    data, err := crypto.DecryptUsingSymmKey(encryptedData, privKey)
+    if err != nil {
+        return err
+    }
+
 ```
 
 ### Email
@@ -53,6 +56,7 @@ Split into small modules so that you dont have to import everything. There is a 
     mailer.StartDaemon()
     defer mailer.StopDaemon()
     mailer.SendMail(From, To, Subject, Body)
+
 ```
 
 ### Localization
@@ -70,6 +74,7 @@ Split into small modules so that you dont have to import everything. There is a 
     translated := translator.Tr("Key")
     //Or With params
     translated := translator.Tr("Key", "Params")
+
 ```
 
 ### Logger
@@ -84,12 +89,14 @@ Split into small modules so that you dont have to import everything. There is a 
     defer logger.DestroyLogger()
 
     // Write to file
-	logger.InitFileLogger("App.log")
+    logger.InitFileLogger("App.log")
+
     defer logger.DestroyLogger()
 
     logger.Debug.Println("Test")
     logger.Info.Println("Test")
     logger.Error.Println("Test")
+
 ```
 
 ### Middleware
@@ -111,10 +118,12 @@ Split into small modules so that you dont have to import everything. There is a 
     import "github.com/adityak368/swissknife/middleware/errorhandler"
     // Using Echo Middleware
     e := echo.New()
-	e.Use(tracing.EchoTracingMiddleware(tracer, "AppName"))
-	e.Use(localization.EchoLocalizer())
-	e.Use(ratelimiter.RateLimitMiddleware())
-	e.HTTPErrorHandler = errorhandler.EchoHTTPErrorHandlerMiddleware
+
+    e.Use(tracing.EchoTracingMiddleware(tracer, "AppName"))
+    e.Use(localization.EchoLocalizer())
+    e.Use(ratelimiter.RateLimitMiddleware())
+    e.HTTPErrorHandler = errorhandler.EchoHTTPErrorHandlerMiddleware
+
 ```
 
 ### ObjectStore
@@ -129,30 +138,31 @@ Split into small modules so that you dont have to import everything. There is a 
 
     // Using echo context
     avatar, err := c.FormFile("avatar")
-	if err != nil {
-		return err
-	}
 
-	src, err := avatar.Open()
-	defer src.Close()
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
 
-	// Check for jpeg and png images
-	bufReader := bufio.NewReader(src)
-	buffer, err := bufReader.Peek(int(math.Min(512, float64(avatar.Size))))
-	contentType := http.DetectContentType(buffer)
-	if err != nil || !(contentType == "image/jpeg" || contentType == "image/png") {
-		return err
-	}
+    src, err := avatar.Open()
+    defer src.Close()
+    if err != nil {
+        return err
+    }
 
-	user := c.Get("user").(*models.User)
+    // Check for jpeg and png images
+    bufReader := bufio.NewReader(src)
+    buffer, err := bufReader.Peek(int(math.Min(512, float64(avatar.Size))))
+    contentType := http.DetectContentType(buffer)
+    if err != nil || !(contentType == "image/jpeg" || contentType == "image/png") {
+        return err
+    }
 
-	uploadResult, err := store.AddImage(config.S3AvatarBucket, user.ID.Hex(), bufReader)
-	if err != nil {
-		return err
-	}
+    user := c.Get("user").(*models.User)
+
+    uploadResult, err := store.AddImage(config.S3AvatarBucket, user.ID.Hex(), bufReader)
+    if err != nil {
+        return err
+    }
 
 ```
 
@@ -169,6 +179,7 @@ Split into small modules so that you dont have to import everything. There is a 
         }
         return nil, response.NewError(http.StatusBadRequest, "InvalidEmailPassword")
     }
+
 ```
 
 ### Validation
@@ -184,4 +195,5 @@ Split into small modules so that you dont have to import everything. There is a 
     t := Test{A:1}
     validator := playground.New()
     validator.Validate(t)
+
 ```
