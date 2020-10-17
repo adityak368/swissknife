@@ -178,9 +178,9 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 ```go
     import "github.com/adityak368/swissknife/response"
 
-    func Login(c context.Context, user *User) (*response.Result, error) {
+    func Login(c context.Context, user *User) (response.Result, error) {
         if user.Authenticate() {
-            return &response.Result{Data: map[string]string{token: "Token"}, MessageID: "UserAuthenticated"}, nil
+            return &response.ExecResult{Result: map[string]string{token: "Token"}, MessageID: "UserAuthenticated"}, nil
         }
         return nil, response.NewError(http.StatusBadRequest, "InvalidEmailPassword")
     }
