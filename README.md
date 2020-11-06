@@ -5,9 +5,7 @@
 Split into small modules so that you dont have to import everything. There is a default implementation for most of the modules. Users can also create plugins by implementing the module interface.
 
 ```
-
 go get -u github.com/adityak368/swissknife/<modulename>@main
-
 ```
 
 ### Crypto
@@ -15,7 +13,6 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 - Basic Crypto functions for symmetric and asymmetric key encryptions
 
 ```go
-
     import "github.com/adityak368/swissknife/crypto"
 
     priv, pub := crypto.GenerateRsaKeyPair()
@@ -37,7 +34,6 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     if err != nil {
         return err
     }
-
 ```
 
 ### Email
@@ -45,8 +41,10 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 - Email Module for sending emails
 
 ```go
-    import "github.com/adityak368/swissknife/email"
-    import "github.com/adityak368/swissknife/email/knifemailer"
+    import (
+        "github.com/adityak368/swissknife/email"
+        "github.com/adityak368/swissknife/email/knifemailer"
+    )
 
     mailer := knifemailer.New(email.MailerConfig{
         Host:     config.EmailHost,
@@ -57,7 +55,6 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     mailer.StartDaemon()
     defer mailer.StopDaemon()
     mailer.SendMail(From, To, Subject, Body)
-
 ```
 
 ### Localization
@@ -66,8 +63,10 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 - Supports translations in JSON format ( Ex: en.json, de.json ) with key value pairs
 
 ```go
-    import "github.com/adityak368/swissknife/localization"
-    import "github.com/adityak368/swissknife/localization/i18n"
+    import (
+        "github.com/adityak368/swissknife/localization"
+        "github.com/adityak368/swissknife/localization/i18n"
+    )
 
     localizer := i18n.Localizer()
     localizer.LoadJSONLocalesFromFolder("res/locales") // locales contains file en-US.json
@@ -75,7 +74,6 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     translated := translator.Tr("Key")
     //Or With params
     translated := translator.Tr("Key", "Params")
-
 ```
 
 ### Logger
@@ -97,7 +95,6 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     logger.Debug.Println("Test")
     logger.Info.Println("Test")
     logger.Error.Println("Test")
-
 ```
 
 ### Middleware
@@ -113,11 +110,13 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     - Adds OpenTracing to our server
 
 ```go
-    import "github.com/adityak368/swissknife/middleware/tracing"
-    import "github.com/adityak368/swissknife/middleware/ratelimiter"
-    import "github.com/adityak368/swissknife/middleware/localization"
-    import "github.com/adityak368/swissknife/middleware/errorhandler"
-	import "github.com/labstack/echo/v4"
+    import (
+        "github.com/adityak368/swissknife/middleware/tracing"
+        "github.com/adityak368/swissknife/middleware/ratelimiter"
+        "github.com/adityak368/swissknife/middleware/localization"
+        "github.com/adityak368/swissknife/middleware/errorhandler"
+        "github.com/labstack/echo/v4"
+    )
 
     // Using Echo Middleware
     e := echo.New()
@@ -126,7 +125,6 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     e.Use(localization.EchoLocalizer())
     e.Use(ratelimiter.RateLimitMiddleware())
     e.HTTPErrorHandler = errorhandler.EchoHTTPErrorHandlerMiddleware
-
 ```
 
 ### ObjectStore
@@ -134,40 +132,46 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 - Supplies Helpers to Upload/Download File/Image to Amazon S3 Store
 
 ```go
-    import "github.com/adityak368/swissknife/objectstore"
-    import "github.com/adityak368/swissknife/objectstore/s3"
+    import (
+        "github.com/adityak368/swissknife/objectstore"
+        "github.com/adityak368/swissknife/objectstore/s3"
+        "github.com/labstack/echo/v4"
+    )
 
-    store := s3.NewStore()
+    store := s3.New()
 
-    // Using echo context
-    avatar, err := c.FormFile("avatar")
+    func UploadAvatar(c echo.Context) error {
+       // Using echo context c
+        avatar, err := c.FormFile("avatar")
 
-    if err != nil {
-        return err
+        if err != nil {
+            return err
+        }
+
+        src, err := avatar.Open()
+        defer src.Close()
+        if err != nil {
+            return err
+        }
+
+        // Check for jpeg and png images
+        bufReader := bufio.NewReader(src)
+        buffer, err := bufReader.Peek(int(math.Min(512, float64(avatar.Size))))
+        contentType := http.DetectContentType(buffer)
+        if err != nil || !(contentType == "image/jpeg" || contentType == "image/png") {
+            return err
+        }
+
+        bucket := "abcd"
+        id := "id"
+
+        uploadResult, err := store.AddImage(bucket, id, bufReader)
+        if err != nil {
+            return err
+        }
+
+	    return c.JSON(http.StatusOK, "OK")
     }
-
-    src, err := avatar.Open()
-    defer src.Close()
-    if err != nil {
-        return err
-    }
-
-    // Check for jpeg and png images
-    bufReader := bufio.NewReader(src)
-    buffer, err := bufReader.Peek(int(math.Min(512, float64(avatar.Size))))
-    contentType := http.DetectContentType(buffer)
-    if err != nil || !(contentType == "image/jpeg" || contentType == "image/png") {
-        return err
-    }
-
-    bucket := "abcd"
-    id := "id"
-
-    uploadResult, err := store.AddImage(bucket, id, bufReader)
-    if err != nil {
-        return err
-    }
-
 ```
 
 ### Response
@@ -184,12 +188,12 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
         }
         return nil, response.NewError(http.StatusBadRequest, "InvalidEmailPassword")
     }
-
 ```
 
 ### Validation
 
 - Provides helpers to perform input validation
+- Uses go-playground for validation
 
 ```go
     import "github.com/adityak368/swissknife/validation/playground"
@@ -200,5 +204,4 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     t := Test{A:10}
     validator := playground.New()
     validator.Validate(t)
-
 ```

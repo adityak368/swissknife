@@ -99,8 +99,8 @@ func (store *S3ObjectStore) DownloadFile(bucket, fileName string, file io.Writer
 	})
 }
 
-// NewStore Creates a new S3 Store
-func NewStore() *S3ObjectStore {
+// New Creates a new S3 Store
+func New() *S3ObjectStore {
 	s3Store := new(S3ObjectStore)
 	s3Store.initStore()
 	return s3Store
@@ -109,10 +109,9 @@ func NewStore() *S3ObjectStore {
 var s3Store *S3ObjectStore
 
 // Store is a singleton for plug and play usage
-func Store() *S3ObjectStore {
+func Store() objectstore.ObjectStore {
 	if s3Store == nil {
-		s3Store = new(S3ObjectStore)
-		s3Store.initStore()
+		s3Store = New()
 	}
 	return s3Store
 }
