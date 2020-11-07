@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/romana/rlog"
+	"github.com/adityak368/rlog"
 )
 
 // LogLevel defines the loglevel
