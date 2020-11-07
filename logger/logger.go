@@ -2,64 +2,119 @@ package logger
 
 import (
 	"io"
-	"log"
 	"os"
+
+	"github.com/romana/rlog"
 )
 
-// Logger Levels
-var (
-	Trace   *log.Logger
-	Info    *log.Logger
-	Warning *log.Logger
-	Error   *log.Logger
-	file    *os.File = nil
-	err     error
+// LogLevel defines the loglevel
+type LogLevel string
+
+const (
+	// LogLevelCritical is the critical log level
+	LogLevelCritical = "CRITICAL"
+	// LogLevelError is the error log level
+	LogLevelError = "ERROR"
+	// LogLevelWarn is the warn log level
+	LogLevelWarn = "WARN"
+	// LogLevelDebug is the debug log level
+	LogLevelDebug = "DEBUG"
+	// LogLevelInfo is the info log level
+	LogLevelInfo = "INFO"
+	// LogLevelTrace is the trace log level
+	LogLevelTrace = "TRACE"
 )
 
-func initLogger(
-	traceHandle io.Writer,
-	infoHandle io.Writer,
-	warningHandle io.Writer,
-	errorHandle io.Writer) {
+// tracelevel sets the tracelevel
+var tracelevel = 1
 
-	Trace = log.New(traceHandle,
-		"TRACE: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
-	Info = log.New(infoHandle,
-		"INFO: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
-	Warning = log.New(warningHandle,
-		"WARNING: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
-	Error = log.New(errorHandle,
-		"ERROR: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
+// Critical prints a message if log level is set to CRITICAL or lower.
+func Critical(a ...interface{}) {
+	rlog.Critical(a...)
 }
 
-// InitConsoleLogger Initializes the console logger
-func InitConsoleLogger() {
-	initLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
+//Criticalf prints a message if log level is set to CRITICAL or lower, with formatting.
+func Criticalf(format string, a ...interface{}) {
+	rlog.Criticalf(format, a...)
 }
 
-// InitFileLogger Initializes the file logger
-func InitFileLogger(filePath string) {
-	file, err = os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalln("Failed to open log file ", filePath, ":", err)
+//Debug prints a message if log level is set to DEBUG or lower.
+func Debug(a ...interface{}) {
+	rlog.Debug(a...)
+}
+
+//Debugf prints a message if log level is set to DEBUG or lower, with formatting.
+func Debugf(format string, a ...interface{}) {
+	rlog.Debugf(format, a...)
+}
+
+//Error prints a message if log level is set to ERROR or lower.
+func Error(a ...interface{}) {
+	rlog.Error(a...)
+}
+
+//Errorf prints a message if log level is set to ERROR or lower, with formatting.
+func Errorf(format string, a ...interface{}) {
+	rlog.Errorf(format, a...)
+}
+
+//Warn prints a message if log level is set to WARN or lower, with formatting.
+func Warn(a ...interface{}) {
+	rlog.Warn(a...)
+}
+
+//Warnf prints a message if log level is set to WARN or lower, with formatting.
+func Warnf(format string, a ...interface{}) {
+	rlog.Warnf(format, a...)
+}
+
+//Info prints a message if log level is set to INFO or lower.
+func Info(a ...interface{}) {
+	rlog.Info(a...)
+}
+
+//Infof prints a message if log level is set to INFO or lower, with formatting.
+func Infof(format string, a ...interface{}) {
+	rlog.Infof(format, a...)
+}
+
+//Trace prints a message if log level is set to TRACE or lower.
+func Trace(a ...interface{}) {
+	rlog.Trace(tracelevel, a...)
+}
+
+//Tracef prints a message if log level is set to TRACE or lower, with formatting.
+func Tracef(format string, a ...interface{}) {
+	rlog.Tracef(tracelevel, format, a...)
+}
+
+//SetOutput prints a message if log level is set to CRITICAL or lower, with formatting.
+func SetOutput(writer io.Writer) {
+	rlog.SetOutput(writer)
+}
+
+// SetLogLevel sets the loglevel of the logger
+func SetLogLevel(level LogLevel) {
+	os.Setenv("RLOG_LOG_LEVEL", "DEBUG")
+	rlog.UpdateEnv()
+}
+
+//SetLogOutputFile sets the logger's output file
+func SetLogOutputFile(logFileName string) {
+	os.Setenv("RLOG_LOG_FILE", logFileName)
+	rlog.UpdateEnv()
+}
+
+//SetShowCallerInfo sets if the logger should log the caller info
+func SetShowCallerInfo(isEnable bool) {
+	os.Setenv("RLOG_CALLER_INFO", boolToStr(isEnable))
+	os.Setenv("RLOG_GOROUTINE_ID", boolToStr(isEnable))
+	rlog.UpdateEnv()
+}
+
+func boolToStr(b bool) string {
+	if b {
+		return "1"
 	}
-
-	multi := io.MultiWriter(file, os.Stdout)
-	multiError := io.MultiWriter(file, os.Stderr)
-
-	initLogger(multi, multi, multi, multiError)
-}
-
-// DestroyLogger Cleans Up Logger
-func DestroyLogger() {
-	if file != nil {
-		file.Close()
-	}
+	return "0"
 }

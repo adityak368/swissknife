@@ -84,17 +84,19 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 ```go
     import "github.com/adityak368/swissknife/logger"
 
-    logger.InitConsoleLogger()
-    defer logger.DestroyLogger()
-
     // Write to file
-    logger.InitFileLogger("App.log")
+    logger.SetLogLevel(logger.LogLevelInfo)
+    logger.SetShowCallerInfo(true)
+    logger.SetLogOutputFile("App.log")
+    // logger.SetOutput(writer io.Writer)
 
-    defer logger.DestroyLogger()
-
-    logger.Debug.Println("Test")
-    logger.Info.Println("Test")
-    logger.Error.Println("Test")
+    logger.Debug("Debug")
+    logger.Debugf("Hello %s", "World")
+    logger.Info("Info")
+    logger.Warn("Warn")
+    logger.Error("Error")
+    logger.Critical("Critical")
+    logger.Trace("Trace")
 ```
 
 ### Middleware
