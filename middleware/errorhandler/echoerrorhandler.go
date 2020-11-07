@@ -19,7 +19,7 @@ func EchoHTTPErrorHandlerMiddleware(err error, c echo.Context) {
 	case *echo.HTTPError:
 		c.JSON(e.Code, response.JSONMessage{Message: e.Error()})
 	default:
-		logger.Error.Println(e.Error())
+		logger.Error(e.Error())
 		c.JSON(http.StatusInternalServerError, map[string]string{"message": http.StatusText(http.StatusInternalServerError)})
 	}
 }

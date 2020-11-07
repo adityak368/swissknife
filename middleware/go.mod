@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/HdrHistogram/hdrhistogram-go v0.9.0 // indirect
 	github.com/adityak368/swissknife/localization v0.0.0-20201017141410-95d62b8ed51b
-	github.com/adityak368/swissknife/logger v0.0.0-20201017141410-95d62b8ed51b
+	github.com/adityak368/swissknife/logger v0.0.0-20201107143956-1e90dcf1dc22
 	github.com/adityak368/swissknife/response v0.0.0-20201017141410-95d62b8ed51b
 	github.com/codahale/hdrhistogram v0.9.0 // indirect
 	github.com/didip/tollbooth v4.0.2+incompatible
