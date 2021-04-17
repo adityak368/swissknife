@@ -13,10 +13,11 @@ func (e *Error) Error() string {
 }
 
 // Message returns a message which can be translated
-func (e *Error) Message() *Message {
+func (e *Error) ToMessage() *Message {
 	return &Message{
-		MessageID:   e.MessageID,
-		MessageArgs: e.MessageArgs,
+		MessageID:         e.MessageID,
+		MessageArgs:       e.MessageArgs,
+		TranslatedMessage: e.MessageID,
 	}
 }
 

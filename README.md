@@ -10,7 +10,7 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ### Crypto
 
-- Basic Crypto functions for symmetric and asymmetric key encryptions
+-   Basic Crypto functions for symmetric and asymmetric key encryptions
 
 ```go
     import "github.com/adityak368/swissknife/crypto"
@@ -38,7 +38,7 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ### Email
 
-- Email Module for sending emails
+-   Email Module for sending emails
 
 ```go
     import (
@@ -59,8 +59,8 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ### Localization
 
-- Localization module to extract locales and perform translations
-- Supports translations in JSON format ( Ex: en.json, de.json ) with key value pairs
+-   Localization module to extract locales and perform translations
+-   Supports translations in JSON format ( Ex: en.json, de.json ) with key value pairs
 
 ```go
     import (
@@ -78,8 +78,8 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ### Logger
 
-- Logger Module for easy application logging
-- Supports console and writing to file
+-   Logger Module for easy application logging
+-   Supports console and writing to file
 
 ```go
     import "github.com/adityak368/swissknife/logger"
@@ -101,37 +101,50 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ### Middleware
 
-- Middlewares for echo server
-  - ErrorHandler
-    - Handles Error Translations
-  - Localization
-    - Sets the Translator so that we can translate in the error handler, or any other part of our code
-  - RateLimiter
-    - RateLimits Requests
-  - Tracing
-    - Adds OpenTracing to our server
+-   Middlewares for echo server
+    -   Localization
+        -   Sets the Translator so that we can translate in the error handler, or any other part of our code
+    -   RateLimiter
+        -   RateLimits Requests
+    -   Tracing
+        -   Adds OpenTracing to our server
 
 ```go
     import (
         "github.com/adityak368/swissknife/middleware/tracing"
         "github.com/adityak368/swissknife/middleware/ratelimiter"
         "github.com/adityak368/swissknife/localization/i18n/middleware"
-        "github.com/adityak368/swissknife/middleware/errorhandler"
+        "github.com/adityak368/swissknife/logger"
         "github.com/labstack/echo/v4"
+        "os"
+        "path"
+        "path/filepath"
     )
 
     // Using Echo Middleware
     e := echo.New()
 
     e.Use(tracing.EchoTracingMiddleware(tracer, "AppName"))
+
     e.Use(middleware.EchoLocalizer())
+    // or with config. path "res/locales" contains file en-US.json which has the translation mappings
+    e.Use(middleware.EchoLocalizerWithConfig(middleware.EchoLocalizerConfig{
+        InitializeFunc: func() {
+            dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+            if err != nil {
+                logger.Critical(err)
+            }
+            localizer := i18n.Localizer()
+            localizer.LoadJSONLocalesFromFolder(path.Join(dir, "res", "locales"))
+        },
+    }))
+
     e.Use(ratelimiter.RateLimitMiddleware())
-    e.HTTPErrorHandler = errorhandler.EchoHTTPErrorHandlerMiddleware
 ```
 
 ### ObjectStore
 
-- Supplies Helpers to Upload/Download File/Image to Amazon S3 Store
+-   Supplies Helpers to Upload/Download File/Image to Amazon S3 Store
 
 ```go
     import (
@@ -178,8 +191,8 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ### Response
 
-- Defines the input/output interfaces for the internal business handlers
-- Each internal function would return a result and error
+-   Defines the input/output interfaces for the internal business handlers
+-   Each internal function would return a result and error
 
 ```go
     import "github.com/adityak368/swissknife/response"
@@ -194,8 +207,8 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
 
 ### Validation
 
-- Provides helpers to perform input validation
-- Uses go-playground for validation
+-   Provides helpers to perform input validation
+-   Uses go-playground for validation
 
 ```go
     import "github.com/adityak368/swissknife/validation/playground"

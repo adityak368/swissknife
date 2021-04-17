@@ -3,7 +3,7 @@ package response
 // Result Defines a internal function result
 type Result interface {
 	Data() interface{}
-	Message() *Message
+	ToMessage() *Message
 }
 
 // ExecResult defines an internal function result
@@ -19,9 +19,10 @@ func (e *ExecResult) Data() interface{} {
 }
 
 // Message returns a message which can be translated
-func (e *ExecResult) Message() *Message {
+func (e *ExecResult) ToMessage() *Message {
 	return &Message{
-		MessageID:   e.MessageID,
-		MessageArgs: e.MessageArgs,
+		MessageID:         e.MessageID,
+		MessageArgs:       e.MessageArgs,
+		TranslatedMessage: e.MessageID,
 	}
 }

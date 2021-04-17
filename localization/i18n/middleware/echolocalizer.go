@@ -7,13 +7,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// LocalizerConfig defines the localization config
-type LocalizerConfig struct {
-	InitializeFunc func() error
+// EchoLocalizerConfig defines the localization config
+type EchoLocalizerConfig struct {
+	InitializeFunc func()
 }
 
 // DefaultLocalizerConfig defines the default localization config
-var DefaultLocalizerConfig = LocalizerConfig{
+var DefaultLocalizerConfig = EchoLocalizerConfig{
 	InitializeFunc: nil,
 }
 
@@ -23,11 +23,11 @@ func EchoLocalizer() echo.MiddlewareFunc {
 }
 
 // EchoLocalizerWithConfig returns a middleware for echo with config
-func EchoLocalizerWithConfig(config LocalizerConfig) echo.MiddlewareFunc {
+func EchoLocalizerWithConfig(config EchoLocalizerConfig) echo.MiddlewareFunc {
 	if config.InitializeFunc != nil {
 		config.InitializeFunc()
 	}
-	return func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			language := strings.TrimSpace(c.Request().Header.Get("Accept-Language"))
 			if language == "" {
@@ -35,7 +35,7 @@ func EchoLocalizerWithConfig(config LocalizerConfig) echo.MiddlewareFunc {
 			}
 			translator := i18n.Localizer().Translator(language)
 			c.Set("translator", translator)
-			return handlerFunc(c)
+			return next(c)
 		}
 	}
 }
