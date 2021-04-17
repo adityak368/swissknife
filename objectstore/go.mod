@@ -1,6 +1,6 @@
 module github.com/adityak368/swissknife/objectstore
 
-go 1.14
+go 1.16
 
 replace github.com/adityak368/swissknife/objectstore => ./
 

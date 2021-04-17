@@ -3,9 +3,8 @@ package playground
 import (
 	"net/http"
 
-	"validation"
-
 	"github.com/adityak368/swissknife/response"
+	"github.com/adityak368/swissknife/validation"
 	"github.com/go-playground/validator/v10"
 )
 
