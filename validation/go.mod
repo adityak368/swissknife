@@ -1,8 +1,6 @@
-module github.com/adityak368/swissknife/validation
+module validation
 
 go 1.14
-
-replace github.com/adityak368/swissknife/validation => ./
 
 require (
 	github.com/adityak368/swissknife/response v0.0.0-20201017141410-95d62b8ed51b

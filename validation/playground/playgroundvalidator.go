@@ -3,8 +3,9 @@ package playground
 import (
 	"net/http"
 
+	"validation"
+
 	"github.com/adityak368/swissknife/response"
-	"github.com/adityak368/swissknife/validation"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -15,11 +16,7 @@ type GoPlaygroundValidator struct {
 
 // Validate Implements the validator interface
 func (v *GoPlaygroundValidator) Validate(i interface{}) error {
-	err := v.validator.Struct(i)
-	if err != nil {
-		return err
-	}
-	return nil
+	return v.validator.Struct(i)
 }
 
 // ToResponseError Converts playground errors to the generic response error from which we can translate

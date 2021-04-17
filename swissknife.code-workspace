@@ -1,0 +1,28 @@
+{
+    "folders": [
+		{
+			"path": "validation"
+		},
+		{
+			"path": "crypto"
+		},
+		{
+			"path": "email"
+		},
+		{
+			"path": "localization"
+		},
+		{
+			"path": "logger"
+		},
+		{
+			"path": "middleware"
+		},
+		{
+			"path": "objectstore"
+		},
+		{
+			"path": "response"
+		}
+	]
+}
