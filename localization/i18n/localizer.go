@@ -42,10 +42,10 @@ func (l *i18nLocalizer) LoadJSONLocalesFromFolder(localesPath string) error {
 		}
 		if !fileInfo.IsDir() {
 			file, err := os.Open(path)
-			defer file.Close()
 			if err != nil {
 				return err
 			}
+			defer file.Close()
 
 			jsonData, err := ioutil.ReadAll(file)
 			if err != nil {
@@ -65,20 +65,15 @@ func (l *i18nLocalizer) LoadJSONLocalesFromFolder(localesPath string) error {
 	return nil
 }
 
-// New Returns a new i18nLocalizer which carries translations from the given locale path
-func New() localization.Localizer {
-	return &i18nLocalizer{
-		locales: make(map[string]localization.Translator),
-	}
-}
-
 var i18n localization.Localizer
 
 // Localizer returns a singleton i18n localizer if you need a plug and play option
 // We dont need a thread safe singleton in most cases as we dont change any data once loaded. So it is not thread safe
 func Localizer() localization.Localizer {
 	if i18n == nil {
-		i18n = New()
+		i18n = &i18nLocalizer{
+			locales: make(map[string]localization.Translator),
+		}
 	}
 	return i18n
 }

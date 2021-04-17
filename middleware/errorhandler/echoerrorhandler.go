@@ -11,7 +11,6 @@ import (
 
 // EchoHTTPErrorHandlerMiddleware defines the error handler middleware for echo
 func EchoHTTPErrorHandlerMiddleware(err error, c echo.Context) {
-
 	switch e := err.(type) {
 	case *response.Error:
 		translator := c.Get("translator").(localization.Translator)

@@ -115,7 +115,7 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     import (
         "github.com/adityak368/swissknife/middleware/tracing"
         "github.com/adityak368/swissknife/middleware/ratelimiter"
-        "github.com/adityak368/swissknife/middleware/localization"
+        "github.com/adityak368/swissknife/localization/i18n/middleware"
         "github.com/adityak368/swissknife/middleware/errorhandler"
         "github.com/labstack/echo/v4"
     )
@@ -124,7 +124,7 @@ go get -u github.com/adityak368/swissknife/<modulename>@main
     e := echo.New()
 
     e.Use(tracing.EchoTracingMiddleware(tracer, "AppName"))
-    e.Use(localization.EchoLocalizer())
+    e.Use(middleware.EchoLocalizer())
     e.Use(ratelimiter.RateLimitMiddleware())
     e.HTTPErrorHandler = errorhandler.EchoHTTPErrorHandlerMiddleware
 ```
