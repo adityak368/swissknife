@@ -2,12 +2,14 @@ package crypto
 
 import (
 	"crypto"
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"hash"
 	"io/ioutil"
 
 	"golang.org/x/crypto/chacha20poly1305"
@@ -186,4 +188,17 @@ func DecryptUsingSymmKey(encryptedMsg, privKey []byte) ([]byte, error) {
 	}
 
 	return plaintext, nil
+}
+
+// HMAC returns the hmac of the message and key
+func HMAC(message, key []byte, hashFunc func() hash.Hash) []byte {
+	mac := hmac.New(hashFunc, key)
+	mac.Write(message)
+	return mac.Sum(nil)
+}
+
+// ValidMAC reports whether messageMAC is a valid HMAC tag for message.
+func ValidMAC(message, key, messageMAC []byte, hashFunc func() hash.Hash) bool {
+	expectedMAC := HMAC(message, key, hashFunc)
+	return hmac.Equal(messageMAC, expectedMAC)
 }
