@@ -25,9 +25,6 @@ const (
 	LogLevelTrace = "TRACE"
 )
 
-// tracelevel sets the tracelevel
-var tracelevel = 1
-
 // Critical prints a message if log level is set to CRITICAL or lower.
 func Critical(a ...interface{}) {
 	rlog.Critical(a...)
@@ -79,12 +76,12 @@ func Infof(format string, a ...interface{}) {
 }
 
 //Trace prints a message if log level is set to TRACE or lower.
-func Trace(a ...interface{}) {
+func Trace(tracelevel int, a ...interface{}) {
 	rlog.Trace(tracelevel, a...)
 }
 
 //Tracef prints a message if log level is set to TRACE or lower, with formatting.
-func Tracef(format string, a ...interface{}) {
+func Tracef(tracelevel int, format string, a ...interface{}) {
 	rlog.Tracef(tracelevel, format, a...)
 }
 
