@@ -5,6 +5,7 @@ type Error struct {
 	Code        int
 	MessageID   string
 	MessageArgs []interface{}
+	NativeError error
 }
 
 // Error returns the error description
@@ -21,7 +22,12 @@ func (e *Error) ToMessage() *Message {
 	}
 }
 
-// NewError Creates a new internal function error
+// NewError Creates a new internal error
 func NewError(code int, messageID string, messageArgs ...interface{}) error {
 	return &Error{Code: code, MessageID: messageID, MessageArgs: messageArgs}
+}
+
+// NewErrorWithDetails Creates a new internal error with the details of the error
+func NewErrorWithDetails(err error, code int, messageID string, messageArgs ...interface{}) error {
+	return &Error{Code: code, MessageID: messageID, NativeError: err, MessageArgs: messageArgs}
 }
