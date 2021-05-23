@@ -16,13 +16,16 @@ func main() {
 
 	if *generatersa {
 		// Create the keys
-		priv, pub := crypto.GenerateRsaKeyPair()
+		priv, err := crypto.GenerateRsaKeyPair(4096)
+		if err != nil {
+			panic(err)
+		}
 
 		if err := crypto.ExportRsaPrivateKeyToFile("privatekey.pem", priv); err != nil {
 			panic(err)
 		}
 
-		if err := crypto.ExportRsaPublicKeyToFile("pubkey.pub", pub); err != nil {
+		if err := crypto.ExportRsaPublicKeyToFile("pubkey.pub", &priv.PublicKey); err != nil {
 			panic(err)
 		}
 		fmt.Println("Generated Pub/Priv Key Pair...")

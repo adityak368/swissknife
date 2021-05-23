@@ -2,10 +2,12 @@ package crypto
 
 import (
 	"crypto"
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/sha256"
+	"crypto/sha512"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
@@ -16,9 +18,8 @@ import (
 )
 
 // GenerateRsaKeyPair generates a pub/priv rsa key pair
-func GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
-	privkey, _ := rsa.GenerateKey(rand.Reader, 4096)
-	return privkey, &privkey.PublicKey
+func GenerateRsaKeyPair(bits int) (*rsa.PrivateKey, error) {
+	return rsa.GenerateKey(rand.Reader, bits)
 }
 
 // ExportRsaPrivateKeyAsPemStr exports the rsa priv key in pem format
@@ -120,7 +121,7 @@ func ParseRsaPrivateKeyFromFile(fileName string) (*rsa.PrivateKey, error) {
 
 // GetHash returns the hash of a message
 func GetHash(msg []byte) []byte {
-	h := sha256.New()
+	h := sha512.New()
 	h.Write(msg)
 	return h.Sum(nil)
 }
@@ -128,13 +129,13 @@ func GetHash(msg []byte) []byte {
 // Sign returns a signature made by combining the message and the signers private key
 func Sign(msg []byte, key *rsa.PrivateKey) (signature []byte, err error) {
 	hs := GetHash(msg)
-	return rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA256, hs)
+	return rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA512, hs)
 }
 
 // Verify checks if a message is signed by a given Public Key
 func Verify(msg []byte, sig []byte, pk *rsa.PublicKey) error {
 	hs := GetHash(msg)
-	return rsa.VerifyPKCS1v15(pk, crypto.SHA256, hs, sig)
+	return rsa.VerifyPKCS1v15(pk, crypto.SHA512, hs, sig)
 }
 
 // EncryptUsingSymmKey Enrypts data using ChaCha2020
@@ -201,4 +202,21 @@ func HMAC(message, key []byte, hashFunc func() hash.Hash) []byte {
 func ValidMAC(message, key, messageMAC []byte, hashFunc func() hash.Hash) bool {
 	expectedMAC := HMAC(message, key, hashFunc)
 	return hmac.Equal(messageMAC, expectedMAC)
+}
+
+// SignEcdsa returns a signature made by combining the message and the signers private key using ecdsa
+func SignEcdsa(msg []byte, key *ecdsa.PrivateKey) ([]byte, error) {
+	hs := GetHash(msg)
+	return ecdsa.SignASN1(rand.Reader, key, hs)
+}
+
+// VerifyEcdsa checks if a message is signed by a given public key using ecdsa
+func VerifyEcdsa(msg []byte, sig []byte, pk *ecdsa.PublicKey) bool {
+	hs := GetHash(msg)
+	return ecdsa.VerifyASN1(pk, hs, sig)
+}
+
+// GenerateEcdsaKeyPair generates a pub/priv ecdsa key pair
+func GenerateEcdsaKeyPair() (*ecdsa.PrivateKey, error) {
+	return ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
 }
