@@ -220,3 +220,31 @@ func VerifyEcdsa(msg []byte, sig []byte, pk *ecdsa.PublicKey) bool {
 func GenerateEcdsaKeyPair() (*ecdsa.PrivateKey, error) {
 	return ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
 }
+
+// EncodeEcdsaPrivateKeyToPem encodes ecdsa private key to pem format
+func EncodeEcdsaPrivateKeyToPem(privateKey *ecdsa.PrivateKey) ([]byte, []byte, error) {
+	x509EncodedPriv, err := x509.MarshalECPrivateKey(privateKey)
+	if err != nil {
+		return nil, nil, err
+	}
+	pemEncodedPriv := pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: x509EncodedPriv})
+
+	x509EncodedPub, err := x509.MarshalPKIXPublicKey(&privateKey.PublicKey)
+	if err != nil {
+		return nil, nil, err
+	}
+	pemEncodedPub := pem.EncodeToMemory(&pem.Block{Type: "EC PUBLIC KEY", Bytes: x509EncodedPub})
+
+	return pemEncodedPriv, pemEncodedPub, nil
+}
+
+// DecodeEcdsaPrivateKeyFromPem decodes pem private key
+func DecodeEcdsaPrivateKeyFromPem(pemEncodedPrivKey []byte) (*ecdsa.PrivateKey, error) {
+	block, _ := pem.Decode(pemEncodedPrivKey)
+	x509Encoded := block.Bytes
+	privateKey, err := x509.ParseECPrivateKey(x509Encoded)
+	if err != nil {
+		return nil, err
+	}
+	return privateKey, nil
+}
