@@ -3,7 +3,7 @@ package s3
 import (
 	"io"
 
-	"github.com/adityak368/swissknife/logger"
+	"github.com/adityak368/swissknife/logger/v2"
 	"github.com/adityak368/swissknife/objectstore"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -36,7 +36,7 @@ func (store *S3ObjectStore) initStore() {
 
 	// Create a s3 client for object deletion
 	store.s3Client = s3.New(s3Session)
-	logger.Info("Initialized S3")
+	logger.Info().Msg("Initialized S3")
 }
 
 // AddFile will upload a single file to S3, it will require a pre-built aws session
