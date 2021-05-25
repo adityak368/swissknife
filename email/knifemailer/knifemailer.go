@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/adityak368/swissknife/email"
-	"github.com/adityak368/swissknife/logger"
+	"github.com/adityak368/swissknife/logger/v2"
 	"gopkg.in/gomail.v2"
 )
 
@@ -61,18 +61,18 @@ func (m *knifeMailer) StartDaemon() error {
 			select {
 			case message, ok := <-m.sendMailChannel:
 				if !ok {
-					logger.Info("Closed Email Daemon")
+					logger.Info().Msg("Closed Email Daemon")
 					return
 				}
 				if m.gomailHandle != nil {
 					if err := gomail.Send(m.gomailHandle, message); err != nil {
-						logger.Trace(err)
+						logger.Error().Err(err)
 					}
 				}
 			}
 		}
 	}()
-	logger.Info("Started Email Daemon")
+	logger.Info().Msg("Started Email Daemon")
 	return nil
 }
 
