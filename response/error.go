@@ -1,5 +1,7 @@
 package response
 
+import "github.com/pkg/errors"
+
 // Error defines a internal function error
 type Error struct {
 	Code        int
@@ -29,5 +31,6 @@ func NewError(code int, messageID string, messageArgs ...interface{}) error {
 
 // NewErrorWithDetails Creates a new internal error with the details of the error
 func NewErrorWithDetails(err error, code int, messageID string, messageArgs ...interface{}) error {
-	return &Error{Code: code, MessageID: messageID, NativeError: err, MessageArgs: messageArgs}
+	wrappedError := errors.WithStack(errors.Wrap(err, ""))
+	return &Error{Code: code, MessageID: messageID, NativeError: wrappedError, MessageArgs: messageArgs}
 }
