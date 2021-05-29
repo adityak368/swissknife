@@ -233,7 +233,7 @@ func EncodeEcdsaPrivateKeyToPem(privateKey *ecdsa.PrivateKey) ([]byte, []byte, e
 	if err != nil {
 		return nil, nil, err
 	}
-	pemEncodedPub := pem.EncodeToMemory(&pem.Block{Type: "EC PUBLIC KEY", Bytes: x509EncodedPub})
+	pemEncodedPub := pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: x509EncodedPub})
 
 	return pemEncodedPriv, pemEncodedPub, nil
 }
